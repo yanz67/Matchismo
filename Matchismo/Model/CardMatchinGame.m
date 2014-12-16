@@ -12,11 +12,19 @@
 
 @property (nonatomic,readwrite) NSInteger score;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card
+@property (nonatomic) NSUInteger gameType;
 
 @end
 
 @implementation CardMatchinGame
 
+-(NSUInteger)gameType
+{
+    if (!_gameType) {
+        _gameType = 2;
+    }
+    return _gameType;
+}
 
 -(NSMutableArray *)cards
 {
@@ -24,6 +32,18 @@
         _cards = [[NSMutableArray alloc]init];
     }
     return _cards;
+}
+
+
+-(instancetype)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck gameType:(NSUInteger)gameType
+{
+    self = [self initWithCardCount:count usingDeck:deck];
+    
+    if (self) {
+        _gameType = gameType;
+    }
+    
+    return self;
 }
 
 -(instancetype)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck
@@ -49,28 +69,52 @@ static const int MISMATCH_PENALTY = 2;
 static const int MATCH_BONUS = 4;
 static const int COST_TO_CHOOSE = 1;
 
+-(void)matchCards:(NSMutableArray *)cards
+{
+    NSUInteger matchScore = 0;
+    BOOL matched = NO;
+    if ([cards count] == self.gameType) {
+        for (int i = 0; i < self.gameType-1; i++) {
+            Card *card = [cards objectAtIndex:i];
+            NSArray *cardsToMatch = [cards subarrayWithRange:NSMakeRange(i+1, [cards count]-1-i)];
+            matchScore = [card match:cardsToMatch]; // bit hacked
+            if (matchScore) {
+                matched = YES;
+                self.score +=matchScore * MATCH_BONUS + i;
+            }
+        }
+        if (matched) {
+            for (Card *card in cards){
+                card.matched = YES;
+                card.chosen = YES;
+            }
+        }else{
+            for (Card *card in cards){
+                    card.chosen = NO;
+                    self.score -= MISMATCH_PENALTY;
+
+            }
+        }
+        
+    }
+
+    
+}
+
 
 -(void)chooseCardAtIndex:(NSUInteger)index
 {
     Card *card = [self cardAtIndex:index];
-    
+    NSMutableArray *chosenCards = [[NSMutableArray alloc]init];
+    [chosenCards addObject:card];
     if (!card.isMatched) {
         if (card.isChosen) {
             card.chosen = NO;
         }else{
             for (Card *otherCard in self.cards){
                 if(otherCard.isChosen && !otherCard.isMatched){
-                    int matchScore = [card match:@[otherCard]];
-                    if (matchScore) {
-                        self.score +=matchScore * MATCH_BONUS;
-                        card.matched = YES;
-                        otherCard.matched = YES;
-                    }else{
-                        otherCard.chosen = NO;
-                        self.score -= MISMATCH_PENALTY;
-                        
-                    }
-                    break;
+                    [chosenCards addObject:otherCard];
+                    [self matchCards:chosenCards];
                 }
             }
             self.score -= COST_TO_CHOOSE;

@@ -15,9 +15,7 @@
 @interface CardGameViewController ()
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
-
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
-
 @property (nonatomic, strong) CardMatchinGame *game;
 
 @end
@@ -25,11 +23,11 @@
 @implementation CardGameViewController
 
 
+
 -(CardMatchinGame *)game
 {
-    
     if(!_game){
-        _game = [[CardMatchinGame alloc]initWithCardCount:[self.cardButtons count] usingDeck:[self createDeck]];
+        _game = [[CardMatchinGame alloc]initWithCardCount:[self.cardButtons count] usingDeck:[self createDeck] gameType:3];
     }
     return _game;
 }
@@ -73,5 +71,10 @@
     [self updateUI];
 }
 
+- (IBAction)redealGame:(UIButton *)sender
+{
+    self.game = nil;
+    [self updateUI];
+}
 
 @end
