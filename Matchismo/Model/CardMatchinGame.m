@@ -73,11 +73,12 @@ static const int COST_TO_CHOOSE = 1;
 {
     NSUInteger matchScore = 0;
     BOOL matched = NO;
+    NSMutableArray *cardsToMatch = [cards mutableCopy];
     if ([cards count] == self.gameType) {
         for (int i = 0; i < self.gameType-1; i++) {
-            Card *card = [cards objectAtIndex:i];
-            NSArray *cardsToMatch = [cards subarrayWithRange:NSMakeRange(i+1, [cards count]-1-i)]; // bit hacked
-            matchScore = [card match:cardsToMatch];
+            Card *card = [cardsToMatch firstObject];
+            [cardsToMatch removeObjectAtIndex:0];
+            matchScore += [card match:cardsToMatch];
             if (matchScore) {
                 matched = YES;
                 self.score +=matchScore * MATCH_BONUS + i;
