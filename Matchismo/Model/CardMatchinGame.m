@@ -81,10 +81,10 @@ static const int COST_TO_CHOOSE = 1;
             matchScore += [card match:cardsToMatch];
             if (matchScore) {
                 matched = YES;
-                self.score +=matchScore * MATCH_BONUS + i;
             }
         }
         if (matched) {
+            self.score +=matchScore * MATCH_BONUS;
             for (Card *card in cards){
                 card.matched = YES;
                 card.chosen = YES;
