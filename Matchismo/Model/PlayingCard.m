@@ -13,6 +13,11 @@
 
 @synthesize suit = _suit;
 
+
+
+
+
+
 +(NSArray *)validSuits
 {
     return @[@"♥",@"♦",@"♠",@"♣"];
@@ -50,8 +55,10 @@
     for (PlayingCard *otherCard in otherCards){
         if ([self.suit isEqualToString:otherCard.suit]) {
             score += 1;
+            self.matchResult = [NSString stringWithFormat:@"%@ matched %@ for 1 point",self.contents, otherCard.contents];
         } else if(self.rank == otherCard.rank) {
             score += 4;
+            self.matchResult = [NSString stringWithFormat:@"%@ matched %@ for 4 point",self.contents, otherCard.contents];
         }
     }
     

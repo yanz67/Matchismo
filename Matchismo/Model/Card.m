@@ -10,7 +10,13 @@
 
 @implementation Card
 
-
+-(NSString *)matchHistory
+{
+    if (!_matchResult) {
+        _matchResult = [[NSString alloc] init];
+    }
+    return _matchResult;
+}
 
 
 -(int)match:(NSArray *)otherCards

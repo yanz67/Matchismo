@@ -22,8 +22,12 @@
 -(void)chooseCardAtIndex:(NSUInteger)index;
 -(Card *)cardAtIndex:(NSUInteger)index;
 
+-(NSArray *)gameHistoryAtIndex:(NSUInteger)index;
+-(NSArray *)lastMatchGameHistory;
+
 
 @property (nonatomic, readonly) NSInteger score;
+@property (nonatomic,readonly) NSUInteger gameHistoryIndex;
 
 
 @end
